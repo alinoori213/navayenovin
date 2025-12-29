@@ -47,6 +47,7 @@
 
 .about-text {
   padding-left: 2rem;
+  text-align: right; /* Ensure text is right aligned */
 }
 
 .about-title {
@@ -61,6 +62,9 @@
   height: 3px;
   background: linear-gradient(135deg, #ff2558 0%, #ff4571 100%);
   margin-bottom: 2rem;
+  margin-right: 0; /* Align to right */
+  margin-left: auto; /* Push to right if in LTR context, but in RTL margin-right: 0 is natural start */
+  /* If direction is RTL, margin-right: 0 is the start. If LTR, margin-left: auto pushes it to right. */
 }
 
 .about-description {

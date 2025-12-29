@@ -1,0 +1,149 @@
+.latest-posts {
+  padding: 5rem 0;
+  background: #f9f9f9;
+}
+
+.latest-posts-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.latest-posts-title {
+  font-size: 2.5rem;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+}
+
+.title-underline {
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(135deg, #ff2558 0%, #ff4571 100%);
+  margin: 0 auto 3rem;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.slider-btn {
+  background: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  color: #333;
+}
+
+.slider-btn:hover {
+  background: #ff2558;
+  color: white;
+  transform: scale(1.1);
+}
+
+.slider-content {
+  width: 100%;
+  max-width: 600px;
+}
+
+.post-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  text-align: right;
+}
+
+.post-image-wrapper {
+  height: 300px;
+  position: relative;
+}
+
+.post-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-category {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 37, 88, 0.9);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.post-info {
+  padding: 2rem;
+}
+
+.post-date {
+  color: #888;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.post-title {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.post-excerpt {
+  color: #666;
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+}
+
+.post-btn {
+  background: none;
+  border: 2px solid #ff2558;
+  color: #ff2558;
+  padding: 0.7rem 2rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.post-btn:hover {
+  background: #ff2558;
+  color: white;
+}
+
+.slider-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.dot.active {
+  background: #ff2558;
+  width: 25px;
+  border-radius: 5px;
+}

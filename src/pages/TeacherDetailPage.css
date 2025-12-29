@@ -1,0 +1,105 @@
+.teacher-detail-page {
+  padding-bottom: 5rem;
+}
+
+.teacher-hero {
+  position: relative;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 4rem;
+}
+
+.teacher-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.teacher-hero-title {
+  position: relative;
+  z-index: 2;
+  color: white;
+  font-size: 3rem;
+}
+
+.teacher-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.teacher-profile {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3rem;
+  background: white;
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.teacher-image-large {
+  border-radius: 15px;
+  overflow: hidden;
+  height: 400px;
+}
+
+.teacher-image-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.teacher-info-main h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.teacher-info-main p {
+  color: #555;
+  line-height: 2;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  text-align: justify;
+}
+
+.teacher-specialties {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.specialty-tag {
+  background: #f0f0f0;
+  color: #555;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.view-classes-btn {
+  background: linear-gradient(135deg, #ff2558 0%, #ff4571 100%);
+  color: white;
+  border: none;
+  padding: 1rem 3rem;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 10px 20px rgba(255, 37, 88, 0.3);
+}
+
+.view-classes-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(255, 37, 88, 0.4);
+}

@@ -38,6 +38,15 @@
   letter-spacing: 1px;
 }
 
+.hero-subtitle-small {
+  font-size: 1rem;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+  letter-spacing: 0.5px;
+  margin-top: -1rem; /* Pull closer to title if needed, or adjust spacing */
+}
+
 .hero-title {
   font-size: 4rem;
   font-weight: 700;

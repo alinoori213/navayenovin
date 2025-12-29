@@ -1,33 +1,48 @@
-import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import React, { useState, useContext } from 'react'
+import { Link } from 'react-router-dom'
+import { AuthContext } from '../context/AuthContext'
 import './Navigation.css'
-import { images } from '../assets/images'
+import logo from '../assets/logo.png'
 
 const Navigation = () => {
-  const location = useLocation()
+  const [isOpen, setIsOpen] = useState(false)
+  const { user, logout } = useContext(AuthContext)
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen)
+  }
 
   return (
-    <nav className="navigation">
-      <div className="nav-container">
-        <Link to="/" className="nav-logo">
-          <img src={images['logo.png']} alt="نوای نوین" className="logo-image" />
+    <nav className="navbar">
+      <div className="navbar-container">
+        <Link to="/" className="navbar-logo">
+          <img src={logo} alt="نوای نوین" className="logo-image" />
         </Link>
-        
-        <ul className="nav-menu">
-          <li><Link to="/" className={location.pathname === '/' ? 'active' : ''}>صفحه اصلی</Link></li>
-          <li><Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>درباره ما</Link></li>
-          <li><Link to="/courses" className={location.pathname === '/courses' ? 'active' : ''}>کلاس‌ها / دوره‌ها</Link></li>
-          <li><Link to="/experience" className={location.pathname === '/experience' ? 'active' : ''}>معرفی اساتید</Link></li>
-          <li><Link to="/contact" className={location.pathname === '/contact' ? 'active' : ''}>تماس با ما</Link></li>
-        </ul>
-        
-        <div className="nav-buttons">
-          <Link to="/login">
-            <button className="login-button">ورود</button>
-          </Link>
-          <Link to="/register">
-            <button className="cta-button">ثبت‌نام</button>
-          </Link>
+
+        <div className={`navbar-links ${isOpen ? 'active' : ''}`}>
+          <Link to="/" onClick={toggleMenu}>صفحه اصلی</Link>
+          <Link to="/courses" onClick={toggleMenu}>کلاس‌ها</Link>
+          <Link to="/about" onClick={toggleMenu}>درباره ما</Link>
+          <Link to="/blog" onClick={toggleMenu}>وبلاگ</Link>
+          <Link to="/news" onClick={toggleMenu}>اخبار</Link>
+          
+          {user ? (
+            <div className="user-menu">
+              <span className="user-name">{user.first_name || user.username} خوش آمدید</span>
+              <button onClick={logout} className="logout-btn">خروج</button>
+            </div>
+          ) : (
+            <div className="auth-buttons">
+              <Link to="/login" className="login-btn" onClick={toggleMenu}>ورود</Link>
+              <Link to="/register" className="register-btn" onClick={toggleMenu}>ثبت نام</Link>
+            </div>
+          )}
+        </div>
+
+        <div className="navbar-toggle" onClick={toggleMenu}>
+          <span className="bar"></span>
+          <span className="bar"></span>
+          <span className="bar"></span>
         </div>
       </div>
     </nav>

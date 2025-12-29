@@ -55,7 +55,7 @@ const TeacherDetailPage = () => {
             <h2>درباره {teacher.first_name} {teacher.last_name}</h2>
             <p className="teacher-bio">{teacher.bio || 'توضیحات درباره استاد به زودی اضافه می‌شود.'}</p>
             
-            <Link to={`/courses?teacher=${teacher.id}`}>
+            <Link to={`/courses?teacher=${teacher.id}&teacherName=${encodeURIComponent(teacher.first_name + ' ' + teacher.last_name)}`}>
               <button className="view-classes-btn">مشاهده کلاس‌ها</button>
             </Link>
           </div>

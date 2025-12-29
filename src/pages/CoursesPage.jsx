@@ -72,9 +72,9 @@ const CoursesPage = () => {
               </button>
             ))}
           </div>
-          {teacherFilter && (
+          {teacherNameFilter && (
             <div className="active-filter-message">
-              نمایش کلاس‌های: <strong>{teacherFilter}</strong>
+              نمایش کلاس‌های استاد: <strong>{decodeURIComponent(teacherNameFilter)}</strong>
               <button onClick={() => window.location.href='/courses'} className="clear-filter">×</button>
             </div>
           )}

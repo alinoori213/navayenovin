@@ -1,158 +1,144 @@
-# راهنمای دیپلوی پروژه نوای نوین روی سرور اوبونتو (Ubuntu)
+# راهنمای دیپلوی پروژه روی سرور اوبونتو (Ubuntu)
 
-این مستند مراحل کامل راه‌اندازی پروژه جنگو (Django) روی یک سرور لینوکس (اوبونتو) را با استفاده از Gunicorn و Nginx توضیح می‌دهد.
+این راهنما مراحل کامل دیپلوی پروژه جنگو (Navaye Novin) روی سرور اوبونتو با استفاده از Nginx و Gunicorn را توضیح می‌دهد.
 
-## ۱. پیش‌نیازها
+## پیش‌نیازها
 
-- یک سرور اوبونتو (نسخه ۲۰.۰۴ یا ۲۲.۰۴)
-- دسترسی کاربر با امتیاز `sudo`
-- نام دامنه (Domain Name) متصل به IP سرور (اختیاری ولی توصیه شده)
+- سرور اوبونتو (نسخه ۲۰.۰۴ یا ۲۲.۰۴)
+- دسترسی روت (sudo)
+- دامین متصل به سرور (در اینجا `legatocore.com`)
 
-## ۲. آماده‌سازی سرور
+## مرحله ۱: نصب پکیج‌های ضروری
 
-ابتدا مخازن پکیج‌ها را آپدیت کرده و ابزارهای مورد نیاز را نصب کنید:
+ابتدا مخازن را آپدیت کرده و پایتون، pip، و Nginx را نصب کنید:
 
 ```bash
 sudo apt update
-sudo apt upgrade -y
-sudo apt install python3-pip python3-dev libpq-dev postgresql postgresql-contrib nginx curl git -y
+sudo apt install python3-pip python3-venv nginx -y
 ```
 
-## ۳. تنظیم پایگاه داده (PostgreSQL)
+## مرحله ۲: دریافت پروژه
 
-اگرچه پروژه به صورت پیش‌فرض با SQLite کار می‌کند، اما برای محیط عملیاتی (Production) استفاده از PostgreSQL توصیه می‌شود.
-
-```bash
-sudo -u postgres psql
-```
-
-در محیط SQL دستورات زیر را وارد کنید:
-
-```sql
-CREATE DATABASE navayenovin_db;
-CREATE USER navayenovin_user WITH PASSWORD 'password123';
-ALTER ROLE navayenovin_user SET client_encoding TO 'utf8';
-ALTER ROLE navayenovin_user SET default_transaction_isolation TO 'read committed';
-ALTER ROLE navayenovin_user SET timezone TO 'UTC';
-GRANT ALL PRIVILEGES ON DATABASE navayenovin_db TO navayenovin_user;
-\q
-```
-*(رمز عبور قوی‌تری جایگزین `password123` کنید)*
-
-## ۴. دریافت پروژه و نصب نیازمندی‌ها
-
-پروژه را در مسیر دلخواه (مثلاً `/home/ubuntu/navayenovin`) کلون کنید:
+پروژه را روی سرور کلون کنید (یا فایل‌ها را آپلود کنید). فرض می‌کنیم پروژه در مسیر `/home/ubuntu/navayenovin` قرار می‌گیرد.
 
 ```bash
 cd /home/ubuntu
-git clone <URL_REPOSITORY_SHOMA> navayenovin
-cd navayenovin/backend
+# اگر از گیت استفاده می‌کنید:
+# git clone <your-repo-url> navayenovin
 ```
 
-یک محیط مجازی (Virtual Environment) بسازید و فعال کنید:
+## مرحله ۳: ایجاد محیط مجازی و نصب وابستگی‌ها
+
+وارد پوشه `backend` شوید و محیط مجازی بسازید:
 
 ```bash
+cd /home/ubuntu/navayenovin/backend
 python3 -m venv venv
 source venv/bin/activate
-```
-
-پکیج‌ها را نصب کنید:
-
-```bash
 pip install -r requirements.txt
-pip install psycopg2-binary  # در صورت استفاده از PostgreSQL
 ```
 
-## ۵. تنظیمات پروژه (Settings)
+## مرحله ۴: تنظیمات محیطی (.env)
 
-فایل `backend/config/settings.py` را برای محیط عملیاتی تنظیم کنید. بهتر است از متغیرهای محیطی (Environment Variables) استفاده کنید، اما برای شروع می‌توانید تغییرات زیر را اعمال کنید:
-
-```python
-# settings.py
-
-DEBUG = False
-ALLOWED_HOSTS = ['your_server_ip', 'your_domain.com']
-
-# تنظیمات دیتابیس (در صورت استفاده از Postgres)
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'navayenovin_db',
-        'USER': 'navayenovin_user',
-        'PASSWORD': 'password123',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
-}
-
-# مسیر فایل‌های استاتیک
-import os
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
-```
-
-سپس دستورات زیر را اجرا کنید:
+یک فایل `.env` در کنار `manage.py` بسازید و تنظیمات زیر را در آن قرار دهید:
 
 ```bash
-python manage.py collectstatic
-python manage.py migrate
-python manage.py createsuperuser
+nano .env
 ```
 
-## ۶. تنظیم Gunicorn
+محتوای فایل `.env`:
 
-برای اجرای پروژه در پس‌زمینه، یک فایل سرویس Systemd بسازید:
+```ini
+DEBUG=False
+SECRET_KEY=your-secure-secret-key-change-this
+ALLOWED_HOSTS=legatocore.com,www.legatocore.com,localhost,127.0.0.1
+```
+(برای خروج از nano دکمه `Ctrl+X` سپس `Y` و `Enter` را بزنید.)
+
+## مرحله ۵: آماده‌سازی دیتابیس و فایل‌های استاتیک
+
+```bash
+# اعمال مایگریشن‌ها
+python manage.py migrate
+
+# جمع‌آوری فایل‌های استاتیک
+python manage.py collectstatic --noinput
+```
+
+**مهم (دسترسی دیتابیس SQLite):**
+چون از SQLite استفاده می‌کنیم، Nginx/Gunicorn (با کاربر `www-data`) باید دسترسی نوشتن به فایل دیتابیس و پوشه آن را داشته باشند:
+
+```bash
+sudo chown :www-data /home/ubuntu/navayenovin/backend
+sudo chown :www-data /home/ubuntu/navayenovin/backend/db.sqlite3
+sudo chmod 775 /home/ubuntu/navayenovin/backend
+sudo chmod 664 /home/ubuntu/navayenovin/backend/db.sqlite3
+```
+
+## مرحله ۶: تنظیم سرویس Gunicorn
+
+یک فایل سرویس برای مدیریت Gunicorn بسازید:
 
 ```bash
 sudo nano /etc/systemd/system/navayenovin.service
 ```
 
-محتوای زیر را در آن قرار دهید (مسیرها و نام کاربر را مطابق سرور خود تغییر دهید):
+محتوای فایل:
 
 ```ini
 [Unit]
-Description=gunicorn daemon for Navaye Novin
+Description=gunicorn daemon
 After=network.target
 
 [Service]
 User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/navayenovin/backend
-ExecStart=/home/ubuntu/navayenovin/backend/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/home/ubuntu/navayenovin/backend/navayenovin.sock config.wsgi:application
+ExecStart=/home/ubuntu/navayenovin/backend/venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/home/ubuntu/navayenovin/backend/navayenovin.sock \
+          config.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-سرویس را فعال و اجرا کنید:
+سرویس را فعال و استارت کنید:
 
 ```bash
 sudo systemctl start navayenovin
 sudo systemctl enable navayenovin
 ```
 
-## ۷. تنظیم Nginx
+بررسی وضعیت سرویس:
+```bash
+sudo systemctl status navayenovin
+```
 
-یک فایل تنظیمات برای Nginx بسازید:
+## مرحله ۷: تنظیم Nginx
+
+یک تنظیمات جدید برای سایت بسازید:
 
 ```bash
 sudo nano /etc/nginx/sites-available/navayenovin
 ```
 
-محتوای زیر را وارد کنید:
+محتوای فایل:
 
 ```nginx
 server {
     listen 80;
-    server_name your_server_ip or_your_domain.com;
+    server_name legatocore.com www.legatocore.com;
 
     location = /favicon.ico { access_log off; log_not_found off; }
     
-    # تنظیم فایل‌های استاتیک
+    # مسیر فایل‌های استاتیک
     location /static/ {
-        alias /home/ubuntu/navayenovin/backend/static_root/;
+        alias /home/ubuntu/navayenovin/backend/staticfiles/;
     }
 
-    # تنظیم فایل‌های مدیا
+    # مسیر فایل‌های مدیا (آپلودی)
     location /media/ {
         alias /home/ubuntu/navayenovin/backend/media/;
     }
@@ -163,8 +149,10 @@ server {
     }
 }
 ```
+*نکته: مطمئن شوید مسیر `staticfiles` در `settings.py` (متغیر `STATIC_ROOT`) تنظیم شده باشد. اگر تنظیم نیست، در `settings.py` اضافه کنید:*
+`STATIC_ROOT = BASE_DIR / 'staticfiles'`
 
-سایت را فعال کنید:
+فعال‌سازی تنظیمات:
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/navayenovin /etc/nginx/sites-enabled
@@ -172,21 +160,21 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-## ۸. تنظیم فایروال (اختیاری)
+## مرحله ۸: تنظیمات فایروال (اختیاری ولی پیشنهادی)
 
 ```bash
 sudo ufw allow 'Nginx Full'
 ```
 
-## ۹. نصب SSL (برای HTTPS)
-
-اگر دامنه دارید، با استفاده از Certbot گواهی SSL رایگان بگیرید:
-
-```bash
-sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d your_domain.com
-```
-
 ---
 
-**تبریک!** پروژه شما اکنون روی سرور عملیاتی شده است.
+## عیب‌یابی
+
+اگر سایت بالا نیامد یا خطای 500/400 داشتید:
+
+1. **لاگ‌های Gunicorn:** `sudo journalctl -u navayenovin`
+2. **لاگ‌های Nginx:** `sudo tail -f /var/log/nginx/error.log`
+3. **بررسی تغییرات کد:** بعد از هر تغییر در کد پایتون، سرویس را ریستارت کنید:
+   ```bash
+   sudo systemctl restart navayenovin
+   ```

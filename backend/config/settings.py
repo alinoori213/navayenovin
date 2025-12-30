@@ -18,19 +18,26 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load environment variables from .env file
-load_dotenv(BASE_DIR / '.env')
+# load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-(8j3!iex18g5eu1o067s*k55di8=io)4!y5)*@(^=9b&r4(*#o')
+SECRET_KEY = 'lLkT8PGYsLViufe2z8plPyHZ3JF3T7H9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+DEBUG = False
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'legatocore.com,www.legatocore.com,localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [
+    'legatocore.com',
+    'www.legatocore.com',
+    'localhost',
+    '127.0.0.1',
+    'navayenovin.com',
+    'www.navayenovin.com',
+]
 
 
 # Application definition
@@ -144,6 +151,16 @@ MEDIA_ROOT = BASE_DIR / 'media'
 AUTH_USER_MODEL = 'accounts.User'
 
 # CORS Settings
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173').split(',')
+CORS_ALLOWED_ORIGINS = [
+    'https://legatocore.com',
+    'https://www.legatocore.com',
+    'https://navayenovin.com',
+    'https://www.navayenovin.com',
+]
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://legatocore.com,https://legatocore.com').split(',')
+CSRF_TRUSTED_ORIGINS = [
+    'https://legatocore.com',
+    'https://www.legatocore.com',
+    'https://navayenovin.com',
+    'https://www.navayenovin.com',
+]

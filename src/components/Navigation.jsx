@@ -43,7 +43,7 @@ const Navigation = () => {
               </Link>
               
               {(user.is_staff || user.is_teacher) && (
-                <a href="http://localhost:8000/management/" className="management-link" target="_blank" rel="noopener noreferrer">
+                <a href="https://legatocore.com/management/" className="management-link" target="_blank" rel="noopener noreferrer">
                   پنل مدیریت
                 </a>
               )}

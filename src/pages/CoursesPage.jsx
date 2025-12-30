@@ -1,18 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useLocation } from 'react-router-dom'
 import api from '../services/api'
+import { SettingsContext } from '../context/SettingsContext'
 import './CoursesPage.css'
 import { images } from '../assets/images'
 
 const CoursesPage = () => {
+  const { getSetting } = useContext(SettingsContext);
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
   const teacherFilter = queryParams.get('teacher')
+  const teacherNameFilter = queryParams.get('teacherName')
 
   const [courses, setCourses] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedTag, setSelectedTag] = useState('همه')
+  const [selectedTag, setSelectedTag] = useState(getSetting('all_tags', 'همه'))
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setSelectedTag(getSetting('all_tags', 'همه'))
+  }, [getSetting])
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -29,34 +36,34 @@ const CoursesPage = () => {
     fetchCourses()
   }, [])
 
-  const tags = ['همه', ...new Set(courses.map(c => c.title))]
+  const tags = [getSetting('all_tags', 'همه'), ...new Set(courses.map(c => c.title))]
 
   const filteredCourses = courses.filter(course => {
     const matchesSearch = course.title.includes(searchTerm) || course.description.includes(searchTerm)
-    const matchesTag = selectedTag === 'همه' || course.title === selectedTag
+    const matchesTag = selectedTag === getSetting('all_tags', 'همه') || course.title === selectedTag
     const matchesTeacher = !teacherFilter || (course.teacher && course.teacher.id === parseInt(teacherFilter))
     return matchesSearch && matchesTag && matchesTeacher
   })
 
-  if (loading) return <div className="loading">در حال بارگذاری...</div>
+  if (loading) return <div className="loading">{getSetting('loading_text', 'در حال بارگذاری...')}</div>
 
   return (
     <div className="courses-page">
       <div className="courses-hero" style={{backgroundImage: `url(${images['ourclass.jpg']})`}}>
         <div className="courses-hero-overlay"></div>
-        <h1 className="courses-hero-title">کلاس‌های ما</h1>
+        <h1 className="courses-hero-title">{getSetting('courses_hero_title', 'کلاس‌های ما')}</h1>
       </div>
 
       <div className="courses-intro">
-        <h2 className="intro-title">شروع سفر شما به دنیای موسیقی</h2>
-        <p className="intro-subtitle">با ما همراه شوید و تجربه‌ای متفاوت و حرفه‌ای در دنیای موسیقی کلاسیک کسب کنید</p>
+        <h2 className="intro-title">{getSetting('courses_intro_title', 'شروع سفر شما به دنیای موسیقی')}</h2>
+        <p className="intro-subtitle">{getSetting('courses_intro_subtitle', 'با ما همراه شوید و تجربه‌ای متفاوت و حرفه‌ای در دنیای موسیقی کلاسیک کسب کنید')}</p>
       </div>
 
       <div className="courses-filter-section">
         <div className="filter-container">
           <input 
             type="text" 
-            placeholder="جستجو در کلاس‌ها..." 
+            placeholder={getSetting('search_placeholder', 'جستجو در کلاس‌ها...')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
@@ -74,7 +81,7 @@ const CoursesPage = () => {
           </div>
           {teacherNameFilter && (
             <div className="active-filter-message">
-              نمایش کلاس‌های استاد: <strong>{decodeURIComponent(teacherNameFilter)}</strong>
+              {getSetting('showing_teacher_courses', 'نمایش کلاس‌های استاد:')} <strong>{decodeURIComponent(teacherNameFilter)}</strong>
               <button onClick={() => window.location.href='/courses'} className="clear-filter">×</button>
             </div>
           )}
@@ -90,7 +97,7 @@ const CoursesPage = () => {
                   {course.image ? (
                     <img src={course.image} alt={course.title} />
                   ) : (
-                    <div className="placeholder-image">تصویر ندارد</div>
+                    <div className="placeholder-image">{getSetting('image_placeholder', 'تصویر ندارد')}</div>
                   )}
                   <div className="course-overlay">
                     <span className="course-tag">{course.title}</span>

@@ -1,0 +1,120 @@
+{% extends 'management/base.html' %}
+
+{% block title %}جزئیات نظرسنجی استاد{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800 font-weight-bold">{{ survey.title }}</h1>
+    <div>
+        {% if user.is_staff or user.is_superuser %}
+        <a href="{% url 'surveys:teacher_question_create' survey.pk %}" class="btn btn-success shadow-sm ml-2">
+            <i class="fas fa-plus fa-sm text-white-50 ms-1"></i> افزودن سوال
+        </a>
+        <a href="{% url 'surveys:survey_list' %}" class="btn btn-secondary shadow-sm">
+            بازگشت
+        </a>
+        {% else %}
+        <a href="{% url 'management:dashboard' %}" class="btn btn-secondary shadow-sm">
+            بازگشت به داشبورد
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 bg-light">
+        <h6 class="m-0 font-weight-bold text-success">لینک عمومی نظرسنجی</h6>
+    </div>
+    <div class="card-body">
+        <div class="input-group">
+            <input type="text" class="form-control" value="{{ request.scheme }}://{{ request.get_host }}{% url 'surveys:teacher_survey_public' survey.slug %}" readonly id="surveyLink">
+            <button class="btn btn-outline-secondary" type="button" onclick="copyLink()">
+                <i class="fas fa-copy"></i> کپی لینک
+            </button>
+        </div>
+        <p class="text-muted small mt-2">این لینک را کپی کرده و برای شرکت‌کنندگان ارسال کنید.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">تعداد شرکت‌کنندگان</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ response_count }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">میانگین کل (از ۵)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {% if response_count > 0 %}
+                                {{ total_average|floatformat:2 }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-star fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-success">نتایج و آمار سوالات</h6>
+    </div>
+    <div class="card-body">
+        {% for item in stats %}
+        <div class="mb-4 border-bottom pb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="font-weight-bold text-dark mb-0">{{ forloop.counter }}. {{ item.question.text }}</h5>
+                <span class="badge badge-success px-3 py-2" style="font-size: 1rem;">
+                    میانگین: {{ item.avg_score|default:"N/A"|floatformat:2 }}
+                </span>
+            </div>
+            
+            <div class="progress mt-2" style="height: 25px;">
+                {% widthratio item.avg_score 5 100 as percentage %}
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ percentage }}%;" aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100">
+                    {{ item.avg_score|default:"0"|floatformat:1 }} از 5
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <p class="text-muted">هنوز سوالی برای این نظرسنجی ایجاد نشده است.</p>
+            {% if user.is_staff or user.is_superuser %}
+            <a href="{% url 'surveys:teacher_question_create' survey.pk %}" class="btn btn-success">افزودن اولین سوال</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function copyLink() {
+    var copyText = document.getElementById("surveyLink");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    alert("لینک کپی شد: " + copyText.value);
+}
+</script>
+{% endblock %}

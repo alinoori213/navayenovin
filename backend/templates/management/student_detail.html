@@ -1,0 +1,83 @@
+{% extends 'management/base.html' %}
+
+{% block title %}جزئیات هنرجو: {{ student.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{{ student.get_full_name }}</h2>
+    <div>
+        <a href="{% url 'management:student_edit' student.pk %}" class="btn btn-warning ml-2">ویرایش اطلاعات</a>
+        <a href="{% url 'management:student_list' %}" class="btn btn-secondary">بازگشت</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">اطلاعات فردی</h6>
+            </div>
+            <div class="card-body">
+                <p><strong>نام کاربری:</strong> {{ student.username }}</p>
+                <p><strong>شماره تماس:</strong> {{ student.phone_number|default:"---" }}</p>
+                <p><strong>کد ملی:</strong> {{ student.national_code|default:"---" }}</p>
+                <p><strong>تاریخ تولد:</strong> {{ student.birth_date|date:"Y/m/d"|default:"---" }}</p>
+                <p><strong>ایمیل:</strong> {{ student.email|default:"---" }}</p>
+                <p><strong>تاریخ عضویت:</strong> {{ student.date_joined|date:"Y/m/d" }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">دوره‌های ثبت‌نام شده و وضعیت مالی</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>دوره</th>
+                                <th>هزینه کل</th>
+                                <th>پرداخت شده</th>
+                                <th>باقی‌مانده</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in enrollment_data %}
+                            <tr>
+                                <td>{{ item.enrollment.course.title }}</td>
+                                {% if item.financial_record %}
+                                <td>{{ item.financial_record.total_fee }} ریال</td>
+                                <td>{{ item.financial_record.total_paid }} ریال</td>
+                                <td>
+                                    {% if item.financial_record.remaining_debt > 0 %}
+                                    <span class="text-danger">{{ item.financial_record.remaining_debt }} ریال</span>
+                                    {% else %}
+                                    <span class="text-success">تسویه شده</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'management:add_payment' item.financial_record.id %}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-money-bill-wave"></i> ثبت پرداخت
+                                    </a>
+                                </td>
+                                {% else %}
+                                <td colspan="4" class="text-center text-muted">اطلاعات مالی ثبت نشده</td>
+                                {% endif %}
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">در هیچ دوره‌ای ثبت‌نام نکرده است.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

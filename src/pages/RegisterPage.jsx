@@ -1,9 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { SettingsContext } from '../context/SettingsContext';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css';
 
 const RegisterPage = () => {
+    const { getSetting } = useContext(SettingsContext);
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -23,7 +25,7 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {
-            setError('رمز عبور و تکرار آن مطابقت ندارند');
+            setError(getSetting('register_password_mismatch', 'رمز عبور و تکرار آن مطابقت ندارند'));
             return;
         }
         try {
@@ -36,18 +38,18 @@ const RegisterPage = () => {
             });
             navigate('/login');
         } catch (err) {
-            setError('خطا در ثبت نام. لطفا مجددا تلاش کنید.');
+            setError(getSetting('register_error', 'خطا در ثبت نام. لطفا مجددا تلاش کنید.'));
         }
     };
 
     return (
         <div className="auth-container">
             <div className="auth-box">
-                <h2>ثبت نام در نوای نوین</h2>
+                <h2>{getSetting('register_title', 'ثبت نام در نوای نوین')}</h2>
                 {error && <p className="error-message">{error}</p>}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>نام کاربری</label>
+                        <label>{getSetting('username_label', 'نام کاربری')}</label>
                         <input
                             type="text"
                             name="username"
@@ -57,7 +59,7 @@ const RegisterPage = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label>ایمیل</label>
+                        <label>{getSetting('email_label', 'ایمیل')}</label>
                         <input
                             type="email"
                             name="email"
@@ -67,7 +69,7 @@ const RegisterPage = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label>نام</label>
+                        <label>{getSetting('first_name_label', 'نام')}</label>
                         <input
                             type="text"
                             name="first_name"
@@ -77,7 +79,7 @@ const RegisterPage = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label>نام خانوادگی</label>
+                        <label>{getSetting('last_name_label', 'نام خانوادگی')}</label>
                         <input
                             type="text"
                             name="last_name"
@@ -87,7 +89,16 @@ const RegisterPage = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label>رمز عبور</label>
+                        <label>{getSetting('phone_number_label', 'شماره موبایل')}</label>
+                        <input
+                            type="text"
+                            name="phone_number"
+                            value={formData.phone_number}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>{getSetting('password_label', 'رمز عبور')}</label>
                         <input
                             type="password"
                             name="password"
@@ -97,7 +108,7 @@ const RegisterPage = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label>تکرار رمز عبور</label>
+                        <label>{getSetting('confirm_password_label', 'تکرار رمز عبور')}</label>
                         <input
                             type="password"
                             name="confirmPassword"
@@ -106,10 +117,10 @@ const RegisterPage = () => {
                             required
                         />
                     </div>
-                    <button type="submit" className="auth-btn">ثبت نام</button>
+                    <button type="submit" className="auth-btn">{getSetting('register_button', 'ثبت نام')}</button>
                 </form>
                 <p className="auth-link">
-                    قبلا ثبت نام کرده‌اید؟ <a href="/login">وارد شوید</a>
+                    {getSetting('already_registered_text', 'قبلا ثبت نام کرده‌اید؟')} <a href="/login">{getSetting('login_link_text', 'وارد شوید')}</a>
                 </p>
             </div>
         </div>

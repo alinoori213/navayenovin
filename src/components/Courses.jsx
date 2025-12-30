@@ -1,41 +1,54 @@
-import React from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { Link } from 'react-router-dom'
+import api from '../services/api'
+import { SettingsContext } from '../context/SettingsContext'
 import './Courses.css'
 
 const Courses = () => {
+  const { getSetting } = useContext(SettingsContext)
+  const [courses, setCourses] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await api.get('/courses/')
+        setCourses(response.data.slice(0, 3)) // Get first 3 courses
+      } catch (error) {
+        console.error('Error fetching courses:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCourses()
+  }, [])
+
+  if (loading) return null
+
   return (
     <section className="courses">
       <div className="courses-container">
-        <h2 className="courses-title">کلاس‌های در حال ثبت نام</h2>
+        <h2 className="courses-title">{getSetting('home_courses_title', 'کلاس‌های در حال ثبت نام')}</h2>
         <div className="underline"></div>
         
         <div className="courses-grid">
-          <div className="course-card">
-            <div className="course-badge">ABRSM</div>
-            <h3 className="course-name">Music Theory</h3>
-            <p className="course-grade">Grade 1</p>
-            
-            <div className="course-info">
-              <h4 className="course-level">تئوری موسیقی سطح۱</h4>
-              <p className="course-description">
-                یکشنبه ها ساعت ۱۹-۱۷ به صورت آنلاین برگزار می‌شود.
-              </p>
-              <button className="course-button">اطلاعات تکمیلی ←</button>
+          {courses.map(course => (
+            <div key={course.id} className="course-card">
+              <div className="course-badge">{course.title.split(' ')[0]}</div>
+              <h3 className="course-name">{course.title}</h3>
+              
+              <div className="course-info">
+                <h4 className="course-level">{course.title}</h4>
+                <p className="course-description">
+                  {course.description.substring(0, 100)}...
+                </p>
+                <Link to="/courses">
+                  <button className="course-button">{getSetting('course_more_info_button', 'اطلاعات تکمیلی')} ←</button>
+                </Link>
+              </div>
             </div>
-          </div>
-          
-          <div className="course-card">
-            <div className="course-badge">ABRSM</div>
-            <h3 className="course-name">Music Theory</h3>
-            <p className="course-grade">Grade 1</p>
-            
-            <div className="course-info">
-              <h4 className="course-level">تئوری موسیقی سطح۱</h4>
-              <p className="course-description">
-                جمعه ها ساعت ۱۴-۱۲ به صورت حضوری برگزار می‌شود.
-              </p>
-              <button className="course-button">اطلاعات تکمیلی ←</button>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

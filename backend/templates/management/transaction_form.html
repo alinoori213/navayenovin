@@ -1,0 +1,75 @@
+{% extends 'management/base.html' %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">ثبت تراکنش جدید</h1>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">اطلاعات پرداخت</h6>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="student" class="form-label">هنرجو / کاربر</label>
+                        <select name="student" id="student" class="form-control" required>
+                            <option value="">انتخاب کنید...</option>
+                            {% for student in students %}
+                                <option value="{{ student.id }}">{{ student.get_full_name }} ({{ student.username }})</option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">اگر کاربر در لیست هنرجویان نیست، با ثبت این تراکنش به عنوان هنرجو علامت‌گذاری می‌شود.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="course" class="form-label">کلاس</label>
+                        <select name="course" id="course" class="form-control" required>
+                            <option value="">انتخاب کنید...</option>
+                            {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.title }} - {{ course.teacher.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">مبلغ (ریال)</label>
+                        <input type="number" name="amount" id="amount" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="date" class="form-label">تاریخ پرداخت</label>
+                        <input type="date" name="date" id="date" class="form-control" value="{% now 'Y-m-d' %}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="payment_type" class="form-label">نوع پرداخت</label>
+                        <select name="payment_type" id="payment_type" class="form-control">
+                            {% for type_code, type_name in payment_types %}
+                                <option value="{{ type_code }}">{{ type_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="receipt" class="form-label">تصویر رسید</label>
+                        <input type="file" name="receipt" id="receipt" class="form-control" accept="image/*">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">توضیحات</label>
+                        <textarea name="description" id="description" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">ثبت تراکنش</button>
+                    <a href="{% url 'management:financial_dashboard' %}" class="btn btn-secondary">بازگشت</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

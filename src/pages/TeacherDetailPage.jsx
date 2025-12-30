@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import api from '../services/api'
+import { SettingsContext } from '../context/SettingsContext'
 import './TeacherDetailPage.css'
 import { images } from '../assets/images'
 
 const TeacherDetailPage = () => {
+  const { getSetting } = useContext(SettingsContext)
   const { id } = useParams()
   const [teacher, setTeacher] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -12,16 +14,8 @@ const TeacherDetailPage = () => {
   useEffect(() => {
     const fetchTeacher = async () => {
       try {
-        const response = await api.get(`/accounts/teachers/`)
-        // Filter locally for now since we don't have a detail endpoint yet or use existing list
-        // Assuming API might not support detail view by ID directly yet, or we use list and find
-        // Better to use detail endpoint if available. Let's assume we can filter from the list for now
-        // or just fetch all and find. 
-        // Ideally: api.get(`/accounts/teachers/${id}/`)
-        // Let's try to find from the list as the previous step showed list view.
-        
-        const foundTeacher = response.data.find(t => t.id === parseInt(id))
-        setTeacher(foundTeacher)
+        const response = await api.get(`/teachers/${id}/`)
+        setTeacher(response.data)
       } catch (error) {
         console.error('Error fetching teacher details:', error)
       } finally {
@@ -52,11 +46,11 @@ const TeacherDetailPage = () => {
             )}
           </div>
           <div className="teacher-info-main">
-            <h2>درباره {teacher.first_name} {teacher.last_name}</h2>
-            <p className="teacher-bio">{teacher.bio || 'توضیحات درباره استاد به زودی اضافه می‌شود.'}</p>
+            <h2>{getSetting('teacher_detail_about_prefix', 'درباره')} {teacher.first_name} {teacher.last_name}</h2>
+            <p className="teacher-bio">{teacher.bio || getSetting('teacher_detail_default_bio', 'توضیحات درباره استاد به زودی اضافه می‌شود.')}</p>
             
             <Link to={`/courses?teacher=${teacher.id}&teacherName=${encodeURIComponent(teacher.first_name + ' ' + teacher.last_name)}`}>
-              <button className="view-classes-btn">مشاهده کلاس‌ها</button>
+              <button className="view-classes-btn">{getSetting('teacher_detail_view_classes', 'مشاهده کلاس‌ها')}</button>
             </Link>
           </div>
         </div>

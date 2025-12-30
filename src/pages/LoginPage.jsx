@@ -1,9 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { SettingsContext } from '../context/SettingsContext';
 import { useNavigate, Link } from 'react-router-dom';
 import './Auth.css';
 
 const LoginPage = () => {
+    const { getSetting } = useContext(SettingsContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useContext(AuthContext);
@@ -16,18 +18,18 @@ const LoginPage = () => {
             await login(username, password);
             navigate('/');
         } catch (err) {
-            setError('نام کاربری یا رمز عبور اشتباه است');
+            setError(getSetting('login_error', 'نام کاربری یا رمز عبور اشتباه است'));
         }
     };
 
     return (
         <div className="auth-container">
             <div className="auth-box">
-                <h2>ورود به حساب کاربری</h2>
+                <h2>{getSetting('login_title', 'ورود به حساب کاربری')}</h2>
                 {error && <p className="error-message">{error}</p>}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>نام کاربری</label>
+                        <label>{getSetting('username_label', 'نام کاربری')}</label>
                         <input
                             type="text"
                             value={username}
@@ -36,7 +38,7 @@ const LoginPage = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label>رمز عبور</label>
+                        <label>{getSetting('password_label', 'رمز عبور')}</label>
                         <input
                             type="password"
                             value={password}
@@ -44,10 +46,10 @@ const LoginPage = () => {
                             required
                         />
                     </div>
-                    <button type="submit" className="auth-btn">ورود</button>
+                    <button type="submit" className="auth-btn">{getSetting('login_button', 'ورود')}</button>
                 </form>
                 <p className="auth-link">
-                    حساب کاربری ندارید؟ <Link to="/register">ثبت نام کنید</Link>
+                    {getSetting('no_account_text', 'حساب کاربری ندارید؟')} <Link to="/register">{getSetting('register_link_text', 'ثبت نام کنید')}</Link>
                 </p>
             </div>
         </div>

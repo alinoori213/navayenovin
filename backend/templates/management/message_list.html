@@ -1,0 +1,61 @@
+{% extends 'management/base.html' %}
+
+{% block title %}پیام‌ها{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>پیام‌های شما</h2>
+    <a href="{% url 'management:message_send' %}" class="btn btn-primary"><i class="fas fa-paper-plane"></i> ارسال پیام جدید</a>
+</div>
+
+<ul class="nav nav-tabs mb-4" id="messageTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="inbox-tab" data-bs-toggle="tab" data-bs-target="#inbox" type="button" role="tab">صندوق دریافت</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="sent-tab" data-bs-toggle="tab" data-bs-target="#sent" type="button" role="tab">ارسال شده</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="messageTabsContent">
+    <div class="tab-pane fade show active" id="inbox" role="tabpanel">
+        <div class="list-group">
+            {% for message in received_messages %}
+            <a href="#" class="list-group-item list-group-item-action {% if not message.is_read %}fw-bold bg-light{% endif %}">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ message.subject }}</h5>
+                    <small>{{ message.sent_at|date:"Y/m/d H:i" }}</small>
+                </div>
+                <p class="mb-1">از طرف: {{ message.sender.get_full_name|default:message.sender.username }}</p>
+                <small>{{ message.body|truncatewords:20 }}</small>
+            </a>
+            {% empty %}
+            <div class="text-center py-4 text-muted">پیامی ندارید.</div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="tab-pane fade" id="sent" role="tabpanel">
+        <div class="list-group">
+            {% for message in sent_messages %}
+            <div class="list-group-item">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ message.subject }}</h5>
+                    <small>{{ message.sent_at|date:"Y/m/d H:i" }}</small>
+                </div>
+                <p class="mb-1">به: 
+                    {% if message.recipient %}
+                        {{ message.recipient.get_full_name|default:message.recipient.username }}
+                    {% else %}
+                        همه کاربران
+                    {% endif %}
+                </p>
+                <small>{{ message.body|truncatewords:20 }}</small>
+            </div>
+            {% empty %}
+            <div class="text-center py-4 text-muted">پیامی ارسال نکرده‌اید.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

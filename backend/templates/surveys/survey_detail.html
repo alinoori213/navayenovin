@@ -1,0 +1,92 @@
+{% extends 'management/base.html' %}
+
+{% block title %}جزئیات نظرسنجی{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800 font-weight-bold">{{ survey.title }}</h1>
+    <div>
+        <a href="{% url 'surveys:question_create' survey.pk %}" class="btn btn-success shadow-sm ml-2">
+            <i class="fas fa-plus fa-sm text-white-50 ms-1"></i> افزودن سوال
+        </a>
+        <a href="{% url 'surveys:survey_list' %}" class="btn btn-secondary shadow-sm">
+            بازگشت
+        </a>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 bg-light">
+        <h6 class="m-0 font-weight-bold text-primary">لینک عمومی نظرسنجی</h6>
+    </div>
+    <div class="card-body">
+        <div class="input-group">
+            <input type="text" class="form-control" value="{{ request.scheme }}://{{ request.get_host }}{% url 'surveys:survey_public' survey.slug %}" readonly id="surveyLink">
+            <button class="btn btn-outline-secondary" type="button" onclick="copyLink()">
+                <i class="fas fa-copy"></i> کپی لینک
+            </button>
+        </div>
+        <p class="text-muted small mt-2">این لینک را کپی کرده و برای شرکت‌کنندگان ارسال کنید. هر کسی با داشتن این لینک می‌تواند در نظرسنجی شرکت کند.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">تعداد شرکت‌کنندگان</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ response_count }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">نتایج و آمار سوالات</h6>
+    </div>
+    <div class="card-body">
+        {% for item in stats %}
+        <div class="mb-5 border-bottom pb-4">
+            <h5 class="font-weight-bold text-dark mb-3">{{ forloop.counter }}. {{ item.question.text }}</h5>
+            
+            {% for choice in item.choices %}
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span>{{ choice.text }}</span>
+                    <span class="text-primary font-weight-bold">{{ choice.vote_count }} رای</span>
+                </div>
+                <div class="progress" style="height: 20px;">
+                    {% widthratio choice.vote_count item.total_votes|default:1 100 as percentage %}
+                    <div class="progress-bar bg-info" role="progressbar" style="width: {{ percentage }}%;" aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100">{{ percentage }}%</div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="text-muted small text-left mt-2">مجموع آراء: {{ item.total_votes }}</div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <p class="text-muted">هنوز سوالی برای این نظرسنجی ایجاد نشده است.</p>
+            <a href="{% url 'surveys:question_create' survey.pk %}" class="btn btn-primary">افزودن اولین سوال</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function copyLink() {
+    var copyText = document.getElementById("surveyLink");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    alert("لینک کپی شد: " + copyText.value);
+}
+</script>
+{% endblock %}

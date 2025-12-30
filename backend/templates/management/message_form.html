@@ -1,0 +1,27 @@
+{% extends 'management/base.html' %}
+
+{% block title %}ارسال پیام{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>ارسال پیام جدید</h2>
+    <a href="{% url 'management:message_list' %}" class="btn btn-secondary">بازگشت</a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_subject" class="form-label">موضوع</label>
+                <input type="text" name="subject" class="form-control" id="id_subject" required>
+            </div>
+            <div class="mb-3">
+                <label for="id_body" class="form-label">متن پیام</label>
+                <textarea name="body" class="form-control" id="id_body" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> ارسال</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'management/base.html' %}
+
+{% block title %}آزمون‌ها: {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>لیست آزمون‌های کلاس: {{ course.title }}</h2>
+    <div>
+        <a href="{% url 'management:exam_create' course.id %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> تعریف آزمون جدید
+        </a>
+        <a href="{% url 'management:course_detail' course.id %}" class="btn btn-secondary">بازگشت</a>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>عنوان آزمون</th>
+                        <th>تاریخ</th>
+                        <th>نمره کل</th>
+                        <th>توضیحات</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for exam in exams %}
+                    <tr>
+                        <td>{{ exam.title }}</td>
+                        <td>{{ exam.date|date:"Y/m/d" }}</td>
+                        <td>{{ exam.max_score }}</td>
+                        <td>{{ exam.description|truncatewords:5 }}</td>
+                        <td>
+                            <a href="{% url 'management:enter_grades' course.id exam.id %}" class="btn btn-sm btn-info">
+                                <i class="fas fa-edit"></i> ثبت نمرات
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">هیچ آزمونی تعریف نشده است.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

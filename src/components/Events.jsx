@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { SettingsContext } from '../context/SettingsContext'
 import './Events.css'
 import { images } from '../assets/images'
 
 const Events = () => {
+  const { getSetting } = useContext(SettingsContext);
+
   return (
     <section className="events">
       <div className="events-container">
-        <h2 className="events-title">رویدادهای پیش رو</h2>
+        <h2 className="events-title">{getSetting('home_events_title', 'رویدادهای پیش رو')}</h2>
         <div className="underline"></div>
         
         <div className="events-grid">
@@ -15,7 +18,7 @@ const Events = () => {
               <div className="event-overlay"></div>
             </div>
             <div className="event-content">
-              <h3 className="event-name">دورهمی موسیقی کلاسیک</h3>
+              <h3 className="event-name">{getSetting('event_1_title', 'دورهمی موسیقی کلاسیک')}</h3>
             </div>
           </div>
           
@@ -24,7 +27,7 @@ const Events = () => {
               <div className="event-overlay"></div>
             </div>
             <div className="event-content">
-              <h3 className="event-name">دورهمی هنرجویان نوای نوین</h3>
+              <h3 className="event-name">{getSetting('event_2_title', 'دورهمی هنرجویان نوای نوین')}</h3>
             </div>
           </div>
 
@@ -33,7 +36,7 @@ const Events = () => {
               <div className="event-overlay"></div>
             </div>
             <div className="event-content">
-              <h3 className="event-name">شروع کلاس‌های تاریخ موسیقی</h3>
+              <h3 className="event-name">{getSetting('event_3_title', 'شروع کلاس‌های تاریخ موسیقی')}</h3>
             </div>
           </div>
         </div>

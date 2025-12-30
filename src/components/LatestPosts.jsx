@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import api from '../services/api'
+import { SettingsContext } from '../context/SettingsContext'
 import './LatestPosts.css'
 
 const LatestPosts = () => {
+  const { getSetting } = useContext(SettingsContext)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -41,7 +43,7 @@ const LatestPosts = () => {
   return (
     <section className="latest-posts">
       <div className="latest-posts-container">
-        <h2 className="latest-posts-title">آخرین مطالب و اخبار</h2>
+        <h2 className="latest-posts-title">{getSetting('latest_posts_title', 'آخرین مطالب و اخبار')}</h2>
         <div className="title-underline"></div>
 
         <div className="slider-container">
@@ -59,7 +61,7 @@ const LatestPosts = () => {
                 ) : (
                   <div className="placeholder-image">تصویر ندارد</div>
                 )}
-                <span className="post-category">مقاله</span>
+                <span className="post-category">{posts[currentSlide].category_name || 'مقاله'}</span>
               </div>
               <div className="post-info">
                 <span className="post-date">
@@ -67,7 +69,7 @@ const LatestPosts = () => {
                 </span>
                 <h3 className="post-title">{posts[currentSlide].title}</h3>
                 <p className="post-excerpt">{posts[currentSlide].content.substring(0, 100)}...</p>
-                <button className="post-btn">مشاهده</button>
+                <button className="post-btn">{getSetting('view_post_button', 'مشاهده')}</button>
               </div>
             </div>
           </div>

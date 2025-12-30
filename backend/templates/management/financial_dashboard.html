@@ -1,0 +1,83 @@
+{% extends 'management/base.html' %}
+
+{% block title %}داشبورد مالی{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>امور مالی</h2>
+</div>
+
+<!-- Financial Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-success text-white shadow">
+            <div class="card-body">
+                <div class="h5">درآمد کل</div>
+                <div class="display-6">{{ total_income }} ریال</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-dark shadow">
+            <div class="card-body">
+                <div class="h5">کل بدهی‌ها</div>
+                <div class="display-6">{{ total_debt }} ریال</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-primary text-white shadow">
+            <div class="card-body">
+                <div class="h5">تعداد تراکنش‌ها</div>
+                <div class="display-6">{{ total_transactions }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">آخرین پرداخت‌ها</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>هنرجو</th>
+                        <th>دوره</th>
+                        <th>مبلغ</th>
+                        <th>تاریخ</th>
+                        <th>روش پرداخت</th>
+                        <th>رسید</th>
+                        <th>توضیحات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in recent_payments %}
+                    <tr>
+                        <td>{{ payment.financial_record.enrollment.student.get_full_name }}</td>
+                        <td>{{ payment.financial_record.enrollment.course.title }}</td>
+                        <td>{{ payment.amount }} ریال</td>
+                        <td>{{ payment.date|date:"Y/m/d" }}</td>
+                        <td>{{ payment.get_payment_type_display }}</td>
+                        <td>
+                            {% if payment.receipt %}
+                                <a href="{{ payment.receipt.url }}" target="_blank" class="btn btn-sm btn-info">مشاهده</a>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>{{ payment.description|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">هیچ پرداختی ثبت نشده است.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

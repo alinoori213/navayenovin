@@ -1,0 +1,115 @@
+{% extends 'management/base.html' %}
+
+{% block title %}مدیریت نظرسنجی‌ها{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800 font-weight-bold">مدیریت نظرسنجی‌ها</h1>
+    <div>
+        <a href="{% url 'surveys:survey_create' %}" class="btn btn-primary shadow-sm ml-2">
+            <i class="fas fa-plus fa-sm text-white-50 ms-1"></i> نظرسنجی عمومی جدید
+        </a>
+        <a href="{% url 'surveys:teacher_survey_create' %}" class="btn btn-success shadow-sm">
+            <i class="fas fa-chalkboard-teacher fa-sm text-white-50 ms-1"></i> نظرسنجی استاد جدید
+        </a>
+    </div>
+</div>
+
+<!-- Public Surveys -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">نظرسنجی‌های عمومی</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>عنوان</th>
+                        <th>تاریخ ایجاد</th>
+                        <th>وضعیت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for survey in surveys %}
+                    <tr>
+                        <td>{{ survey.title }}</td>
+                        <td>{{ survey.created_at|date:"Y/m/d" }}</td>
+                        <td>
+                            {% if survey.is_active %}
+                            <span class="badge bg-success">فعال</span>
+                            {% else %}
+                            <span class="badge bg-secondary">غیرفعال</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'surveys:survey_detail' survey.pk %}" class="btn btn-sm btn-info">
+                                <i class="fas fa-chart-bar"></i> نتایج و سوالات
+                            </a>
+                            <a href="{% url 'surveys:survey_delete' survey.pk %}" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i> حذف
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">هیچ نظرسنجی عمومی یافت نشد.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Teacher Surveys -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-success">نظرسنجی‌های اساتید</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>استاد</th>
+                        <th>عنوان</th>
+                        <th>تاریخ ایجاد</th>
+                        <th>وضعیت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for survey in teacher_surveys %}
+                    <tr>
+                        <td>{{ survey.teacher.get_full_name }}</td>
+                        <td>{{ survey.title }}</td>
+                        <td>{{ survey.created_at|date:"Y/m/d" }}</td>
+                        <td>
+                            {% if survey.is_active %}
+                            <span class="badge bg-success">فعال</span>
+                            {% else %}
+                            <span class="badge bg-secondary">غیرفعال</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'surveys:teacher_survey_detail' survey.pk %}" class="btn btn-sm btn-info">
+                                <i class="fas fa-chart-bar"></i> نتایج و سوالات
+                            </a>
+                            <a href="{% url 'surveys:teacher_survey_delete' survey.pk %}" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i> حذف
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">هیچ نظرسنجی استادی یافت نشد.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

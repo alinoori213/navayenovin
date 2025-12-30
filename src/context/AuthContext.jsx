@@ -24,7 +24,11 @@ export const AuthProvider = ({ children }) => {
                 
                 // For now, let's proceed with structure.
                 const response = await api.get('/auth/user/');
-                setUser(response.data);
+                if (response.status === 204) {
+                    setUser(null);
+                } else {
+                    setUser(response.data);
+                }
             } catch (error) {
                 setUser(null);
             } finally {

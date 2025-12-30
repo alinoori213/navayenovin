@@ -1,0 +1,27 @@
+{% extends 'management/base.html' %}
+
+{% block title %}حذف نظرسنجی{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-danger">حذف نظرسنجی</h6>
+            </div>
+            <div class="card-body">
+                <p>آیا مطمئن هستید که می‌خواهید نظرسنجی <strong>{{ survey.title }}</strong> را حذف کنید؟</p>
+                <p class="text-danger small">با حذف این نظرسنجی، تمام سوالات و پاسخ‌های ثبت شده نیز حذف خواهند شد.</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'surveys:survey_list' %}" class="btn btn-secondary">انصراف</a>
+                        <button type="submit" class="btn btn-danger">بله، حذف شود</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

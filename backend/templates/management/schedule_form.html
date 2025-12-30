@@ -1,0 +1,96 @@
+{% extends 'management/base.html' %}
+
+{% block title %}برنامه زمانی {{ teacher.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>مدیریت برنامه زمانی: {{ teacher.get_full_name }}</h2>
+    {% if request.user.is_staff or request.user.is_superuser %}
+    <a href="{% url 'management:teacher_detail' teacher.pk %}" class="btn btn-secondary">بازگشت</a>
+    {% else %}
+    <a href="{% url 'management:dashboard' %}" class="btn btn-secondary">بازگشت به داشبورد</a>
+    {% endif %}
+</div>
+
+<div class="row">
+    <!-- Add New Slot -->
+    <div class="col-md-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">افزودن زمان جدید</h6>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_day" class="form-label">روز هفته</label>
+                        <select name="day" class="form-select" id="id_day" required>
+                            <option value="0">شنبه</option>
+                            <option value="1">یکشنبه</option>
+                            <option value="2">دوشنبه</option>
+                            <option value="3">سه‌شنبه</option>
+                            <option value="4">چهارشنبه</option>
+                            <option value="5">پنج‌شنبه</option>
+                            <option value="6">جمعه</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_start_time" class="form-label">ساعت شروع</label>
+                        <input type="time" name="start_time" class="form-control" id="id_start_time" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_end_time" class="form-label">ساعت پایان</label>
+                        <input type="time" name="end_time" class="form-control" id="id_end_time" required>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block">افزودن</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Existing Slots -->
+    <div class="col-md-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">زمان‌های ثبت شده</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>روز هفته</th>
+                                <th>ساعت شروع</th>
+                                <th>ساعت پایان</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for schedule in schedules %}
+                            <tr>
+                                <td>{{ schedule.get_day_of_week_display }}</td>
+                                <td>{{ schedule.start_time }}</td>
+                                <td>{{ schedule.end_time }}</td>
+                                <td>
+                                    <form method="post" style="display:inline;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="delete_id" value="{{ schedule.id }}">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('آیا مطمئن هستید؟')">
+                                            <i class="fas fa-trash"></i> حذف
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">هیچ برنامه‌ای ثبت نشده است.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

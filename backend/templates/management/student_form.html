@@ -1,0 +1,62 @@
+{% extends 'management/base.html' %}
+
+{% block title %}{% if form.instance.pk %}ویرایش هنرجو{% else %}افزودن هنرجو{% endif %}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{% if form.instance.pk %}ویرایش هنرجو: {{ form.instance.get_full_name }}{% else %}افزودن هنرجو جدید{% endif %}</h2>
+    <a href="{% url 'management:student_list' %}" class="btn btn-secondary">بازگشت</a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_username" class="form-label">نام کاربری</label>
+                <input type="text" name="username" class="form-control" id="id_username" value="{{ form.username.value|default_if_none:'' }}" required>
+                {% if form.username.errors %}
+                <div class="text-danger small">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="id_first_name" class="form-label">نام</label>
+                    <input type="text" name="first_name" class="form-control" id="id_first_name" value="{{ form.first_name.value|default_if_none:'' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="id_last_name" class="form-label">نام خانوادگی</label>
+                    <input type="text" name="last_name" class="form-control" id="id_last_name" value="{{ form.last_name.value|default_if_none:'' }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="id_phone_number" class="form-label">شماره تماس</label>
+                    <input type="text" name="phone_number" class="form-control" id="id_phone_number" value="{{ form.phone_number.value|default_if_none:'' }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="id_national_code" class="form-label">کد ملی</label>
+                    <input type="text" name="national_code" class="form-control" id="id_national_code" value="{{ form.national_code.value|default_if_none:'' }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="id_birth_date" class="form-label">تاریخ تولد</label>
+                    <input type="date" name="birth_date" class="form-control" id="id_birth_date" value="{{ form.birth_date.value|date:'Y-m-d'|default_if_none:'' }}">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="id_email" class="form-label">ایمیل</label>
+                <input type="email" name="email" class="form-control" id="id_email" value="{{ form.email.value|default_if_none:'' }}">
+            </div>
+            
+            {% if not form.instance.pk %}
+            <!-- Default password info only for new users -->
+            <div class="alert alert-info">
+                رمز عبور پیش‌فرض برابر با نام کاربری خواهد بود.
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-success">ذخیره</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

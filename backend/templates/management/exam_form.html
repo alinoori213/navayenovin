@@ -1,0 +1,38 @@
+{% extends 'management/base.html' %}
+
+{% block title %}تعریف آزمون جدید{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>تعریف آزمون جدید برای {{ course.title }}</h2>
+    <a href="javascript:history.back()" class="btn btn-secondary">بازگشت</a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_title" class="form-label">عنوان آزمون</label>
+                <input type="text" name="title" class="form-control" id="id_title" required>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="id_date" class="form-label">تاریخ آزمون</label>
+                    <input type="date" name="date" class="form-control" id="id_date" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="id_max_score" class="form-label">نمره کل</label>
+                    <input type="number" step="0.01" name="max_score" class="form-control" id="id_max_score" value="20">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="id_description" class="form-label">توضیحات</label>
+                <textarea name="description" class="form-control" id="id_description" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success">ذخیره</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

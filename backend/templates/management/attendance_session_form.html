@@ -1,0 +1,26 @@
+{% extends 'management/base.html' %}
+
+{% block title %}ثبت جلسه جدید{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>ثبت جلسه جدید برای {{ course.title }}</h2>
+    <a href="javascript:history.back()" class="btn btn-secondary">بازگشت</a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_date" class="form-label">تاریخ جلسه</label>
+                <input type="date" name="date" class="form-control" id="id_date" required>
+                {% if form.date.errors %}
+                <div class="text-danger small">{{ form.date.errors }}</div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-success">ثبت و ادامه</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

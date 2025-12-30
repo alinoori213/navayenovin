@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../services/api'
+import { SettingsContext } from '../context/SettingsContext'
 import './Experience.css'
 
 const Experience = () => {
+  const { getSetting } = useContext(SettingsContext)
   const [instructors, setInstructors] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const response = await api.get('/accounts/teachers/')
+        const response = await api.get('/teachers/')
         setInstructors(response.data)
       } catch (error) {
         console.error('Error fetching teachers:', error)
@@ -28,12 +30,12 @@ const Experience = () => {
     <section className="experience">
       <div className="experience-hero">
         <div className="experience-hero-overlay"></div>
-        <h1 className="experience-hero-title">اساتید ما</h1>
+        <h1 className="experience-hero-title">{getSetting('teachers_hero_title', 'اساتید ما')}</h1>
       </div>
 
       <div className="instructors-section">
         <div className="instructors-container">
-          <h2 className="instructors-title">با اساتید مجرب ما آشنا شوید</h2>
+          <h2 className="instructors-title">{getSetting('teachers_section_title', 'با اساتید مجرب ما آشنا شوید')}</h2>
           <div className="title-underline"></div>
 
           <div className="instructors-grid">

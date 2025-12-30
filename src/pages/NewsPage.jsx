@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
+import { SettingsContext } from '../context/SettingsContext';
 import './BlogPage.css'; // Reusing BlogPage styles
 
 const NewsPage = () => {
+    const { getSetting } = useContext(SettingsContext);
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchNews = async () => {
             try {
-                // Assuming news are posts with a specific category or flag
-                // For now, fetching all posts as a placeholder
-                const response = await api.get('/posts/');
+                const response = await api.get('/news/');
                 setNews(response.data);
             } catch (error) {
                 console.error('Error fetching news:', error);
@@ -24,12 +25,12 @@ const NewsPage = () => {
     }, []);
 
     if (loading) {
-        return <div className="loading">در حال بارگذاری...</div>;
+        return <div className="loading">{getSetting('loading_text', 'در حال بارگذاری...')}</div>;
     }
 
     return (
         <div className="blog-container">
-            <h1>اخبار آموزشگاه</h1>
+            <h1>{getSetting('news_title', 'اخبار آموزشگاه')}</h1>
             <div className="posts-grid">
                 {news.length > 0 ? (
                     news.map(item => (
@@ -38,7 +39,7 @@ const NewsPage = () => {
                                 {item.image ? (
                                     <img src={item.image} alt={item.title} />
                                 ) : (
-                                    <div className="placeholder-image">تصویر ندارد</div>
+                                    <div className="placeholder-image">{getSetting('image_placeholder', 'تصویر ندارد')}</div>
                                 )}
                             </div>
                             <div className="post-content">
@@ -47,12 +48,12 @@ const NewsPage = () => {
                                 <div className="post-meta">
                                     <span className="date">{new Date(item.created_at).toLocaleDateString('fa-IR')}</span>
                                 </div>
-                                <button className="read-more">ادامه مطلب</button>
+                                <Link to={`/news/${item.id}`} className="read-more">{getSetting('read_more', 'ادامه مطلب')}</Link>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <p>هیچ خبری یافت نشد.</p>
+                    <p>{getSetting('news_no_news', 'هیچ خبری یافت نشد.')}</p>
                 )}
             </div>
         </div>

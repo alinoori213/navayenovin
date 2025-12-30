@@ -1,0 +1,31 @@
+{% extends 'management/base.html' %}
+
+{% block title %}آپلود فایل جدید{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>آپلود فایل جدید</h2>
+    <a href="{% url 'management:library_list' %}" class="btn btn-secondary">بازگشت</a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_title" class="form-label">عنوان فایل</label>
+                <input type="text" name="title" class="form-control" id="id_title" required>
+            </div>
+            <div class="mb-3">
+                <label for="id_description" class="form-label">توضیحات</label>
+                <textarea name="description" class="form-control" id="id_description" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="id_file" class="form-label">فایل</label>
+                <input type="file" name="file" class="form-control" id="id_file" required>
+            </div>
+            <button type="submit" class="btn btn-success">آپلود</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

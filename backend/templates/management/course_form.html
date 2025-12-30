@@ -1,0 +1,60 @@
+{% extends 'management/base.html' %}
+
+{% block title %}تعریف کلاس جدید{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>تعریف کلاس جدید</h2>
+    <a href="{% url 'management:course_list' %}" class="btn btn-secondary">بازگشت</a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="id_title" class="form-label">عنوان کلاس</label>
+                    <input type="text" name="title" class="form-control" id="id_title" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="id_teacher" class="form-label">استاد مربوطه</label>
+                    <select name="teacher" class="form-select" id="id_teacher" required>
+                        <option value="">انتخاب کنید...</option>
+                        {% for teacher in teachers %}
+                        <option value="{{ teacher.id }}">{{ teacher.get_full_name }} ({{ teacher.username }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="id_price" class="form-label">هزینه (ریال)</label>
+                    <input type="number" name="price" class="form-control" id="id_price" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="id_days" class="form-label">روزهای برگزاری</label>
+                    <input type="text" name="days" class="form-control" id="id_days" placeholder="مثال: شنبه و چهارشنبه">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="id_time" class="form-label">ساعت برگزاری</label>
+                    <input type="text" name="time" class="form-control" id="id_time" placeholder="مثال: 16:00 الی 17:30">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_description" class="form-label">توضیحات</label>
+                <textarea name="description" class="form-control" id="id_description" rows="4"></textarea>
+            </div>
+            
+            <div class="mb-3">
+                <label for="id_image" class="form-label">تصویر کلاس</label>
+                <input type="file" name="image" class="form-control" id="id_image">
+            </div>
+
+            <button type="submit" class="btn btn-success">ثبت کلاس</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

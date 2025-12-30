@@ -1,0 +1,50 @@
+{% extends 'management/base.html' %}
+
+{% block title %}ثبت نمرات{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>ثبت نمرات: {{ exam.title }} (نمره کل: {{ exam.max_score }})</h2>
+    <a href="{% url 'management:exam_list' course.id %}" class="btn btn-secondary">بازگشت</a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>نام هنرجو</th>
+                            <th>نمره</th>
+                            <th>بازخورد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in formset %}
+                        <tr>
+                            <td>
+                                {{ form.id }}
+                                {{ form.instance.student.get_full_name }}
+                                <div class="d-none">{{ form.student }}</div>
+                            </td>
+                            <td>
+                                {{ form.score }}
+                            </td>
+                            <td>
+                                {{ form.feedback }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <button type="submit" class="btn btn-success">ثبت نمرات</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

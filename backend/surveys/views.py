@@ -110,7 +110,7 @@ class TeacherSurveyCreateView(ManagerRequiredMixin, CreateView):
 
 class TeacherSurveyDetailView(TeacherOwnerOrManagerRequiredMixin, DetailView):
     model = TeacherSurvey
-    template_name = 'surveys/teacher_survey_detail.html'
+    template_name = 'management/teacher_survey_detail.html'
     context_object_name = 'survey'
 
     def get_context_data(self, **kwargs):
